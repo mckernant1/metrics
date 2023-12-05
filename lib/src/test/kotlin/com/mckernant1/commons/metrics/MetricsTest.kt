@@ -1,10 +1,11 @@
-package com.mckernant1.metrics
+package com.mckernant1.commons.metrics
 
 import com.mckernant1.commons.standalone.delay
 import com.mckernant1.commons.standalone.measureDuration
 import com.mckernant1.commons.standalone.measureOperation
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -45,8 +46,40 @@ class MetricsTest {
 
         metrics.addCount(hello1, 10)
 
+        val metricsByName = metrics.exposeMetrics()
+            .groupBy { it.name }
+
         assertEquals(3, metrics.exposeMetrics().size)
-        assertEquals(6, metrics.exposeMetrics().filter { it.name == hello }.sumOf { it.value.toInt() })
+        assertEquals(2, metricsByName.size)
+        assertEquals(6, metricsByName[hello]?.sumOf { it.value.toInt() })
+    }
+
+    @Test
+    fun throwOnDuplicateDimensions() {
+        val metrics = TestMetricsImpl(
+            "Test",
+            setOf(Dimension("Host", "localhost"))
+        )
+
+        assertThrows<IllegalStateException> {
+            metrics.newMetrics("Host" to "127.0.0.1")
+        }
+
+        assertThrows<IllegalStateException> {
+            metrics.withDimensions("Host" to "127.0.1.1") {
+
+            }
+        }
+    }
+
+    @Test
+    fun testWithMetrics() {
+        val metrics = TestMetricsImpl("Test")
+
+        metrics.withDimensions("Host" to "localhost") {
+            val subMetrics = it as TestMetricsImpl
+            assertTrue(subMetrics.exposeDimensions().isNotEmpty())
+        }
     }
 
 }

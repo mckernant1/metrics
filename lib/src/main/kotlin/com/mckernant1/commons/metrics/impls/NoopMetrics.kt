@@ -8,14 +8,14 @@ import com.mckernant1.commons.metrics.Metrics
 
 class NoopMetrics(
     namespace: String,
-    dimensions: List<Dimension> = listOf()
+    dimensions: Set<Dimension> = setOf()
 ) : Metrics(namespace, dimensions) {
 
     private val logger = logger()
     private val mapper = ObjectMapper()
         .registerModule(kotlinModule())
 
-    override fun newMetricsInternal(dimensions: List<Dimension>): Metrics {
+    override fun newMetricsInternal(dimensions: Set<Dimension>): Metrics {
         return NoopMetrics(namespace, dimensions)
     }
 

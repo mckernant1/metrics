@@ -19,15 +19,15 @@ import kotlin.reflect.KClass
  * Metrics list will be added to and will submit and clear simultaneously in a locking fashion.
  *
  * @param namespace The namespace of the metric. Usually service differentiator
- * @param dimensions are instantiated at creation.
+ * @param dimensions are instantiated at creation. dimensions are attached to metrics as a String String map
  *
  */
 abstract class Metrics(
     protected val namespace: String,
-    protected val dimensions: List<Dimension>
+    protected val dimensions: Set<Dimension>
 ) {
 
-    protected val metricsLock: ReentrantLock = ReentrantLock()
+    private val metricsLock: ReentrantLock = ReentrantLock()
     protected val metrics: MutableList<Metric> = mutableListOf()
 
     /**
@@ -82,14 +82,18 @@ abstract class Metrics(
      *
      * This should always return a child class instance with passed params
      */
-    protected abstract fun newMetricsInternal(dimensions: List<Dimension>): Metrics
+    protected abstract fun newMetricsInternal(dimensions: Set<Dimension>): Metrics
 
     fun newMetrics(vararg dimensions: Pair<String, String>): Metrics {
         val newDimensions = dimensions
             .map { (name, value) -> Dimension(name, value) }
 
+        if (newDimensions.intersect(this.dimensions).isNotEmpty()) {
+            throw IllegalStateException("Attempting to add Dimensions that already exist. currentDimensions: ${this.dimensions}, newDimensions: $newDimensions")
+        }
+
         // Create a copy of current dimensions and add new dimensions
-        val childDimensions = this.dimensions.toMutableList()
+        val childDimensions = this.dimensions.toMutableSet()
         childDimensions.addAll(newDimensions)
 
         return newMetricsInternal(childDimensions)

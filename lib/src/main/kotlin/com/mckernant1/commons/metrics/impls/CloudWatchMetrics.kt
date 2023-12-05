@@ -10,12 +10,12 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum
 class CloudWatchMetrics(
     namespace: String,
     private val cloudWatchClient: CloudWatchClient,
-    dimensions: List<Dimension> = listOf()
+    dimensions: Set<Dimension> = setOf()
 ) : Metrics(namespace, dimensions) {
 
     private val logger: Logger = logger()
 
-    override fun newMetricsInternal(dimensions: List<Dimension>): Metrics {
+    override fun newMetricsInternal(dimensions: Set<Dimension>): Metrics {
         return CloudWatchMetrics(namespace, cloudWatchClient, dimensions)
     }
 

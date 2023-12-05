@@ -14,10 +14,10 @@ import kotlinx.coroutines.runBlocking
 class SendingChannelMetrics(
     private val sender: SendChannel<Collection<Metric>>,
     namespace: String,
-    dimensions: List<Dimension>
+    dimensions: Set<Dimension>
 ) : Metrics(namespace, dimensions) {
 
-    override fun newMetricsInternal(dimensions: List<Dimension>): Metrics {
+    override fun newMetricsInternal(dimensions: Set<Dimension>): Metrics {
         return SendingChannelMetrics(sender, namespace, dimensions)
     }
 
