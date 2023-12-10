@@ -15,7 +15,7 @@ class NoopMetrics(
     private val logger = logger()
 
     override fun newMetricsInternal(dimensions: Set<Dimension>): Metrics {
-        return NoopMetrics(namespace, dimensions)
+        return NoopMetrics(namespace, dimensions, mapper)
     }
 
     override fun submitInternal() {
