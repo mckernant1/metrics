@@ -6,7 +6,8 @@ enum class MetricUnit {
     COUNT,
     PERCENT,
     SECONDS,
-    MILLISECONDS
+    MILLISECONDS,
+    BYTES
     ;
 
     fun toStandardUnit(): StandardUnit = when (this) {
@@ -14,6 +15,7 @@ enum class MetricUnit {
         PERCENT -> StandardUnit.PERCENT
         SECONDS -> StandardUnit.SECONDS
         MILLISECONDS -> StandardUnit.MILLISECONDS
+        BYTES -> StandardUnit.BYTES
     }
 
 }

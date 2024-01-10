@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
  *
  * There should be one overarching metrics object per project and then other newMetrics are branched off for components
  *
- * This metrics object is safe to share between threads.
+ * This metrics object is safe to share between threads. Though it is not recommended to submit metrics from multiple threads
  *
  * Metrics list will be added to and will submit and clear simultaneously in a locking fashion.
  *
@@ -104,6 +104,11 @@ abstract class Metrics(
         MetricsConstants.CLASS_NAME to clazz.simpleName!!
     )
 
+
+    inline fun <reified T> newMetricsForClass(): Metrics = newMetrics(
+        MetricsConstants.CLASS_NAME to T::class.simpleName!!
+    )
+
     /**
      * submits the metrics to whatever source.
      *
@@ -122,15 +127,7 @@ abstract class Metrics(
     fun submitAndClear() {
         metricsLock.withLock {
             submitInternal()
-            clear()
+            metrics.clear()
         }
-    }
-
-
-    /**
-     * Clear out metrics. Notably does not lock metrics
-     */
-    private fun clear() {
-        metrics.clear()
     }
 }

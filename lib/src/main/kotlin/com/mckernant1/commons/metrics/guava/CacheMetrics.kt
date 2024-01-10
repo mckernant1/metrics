@@ -1,6 +1,7 @@
-package com.mckernant1.commons.metrics
+package com.mckernant1.commons.metrics.guava
 
 import com.google.common.cache.CacheStats
+import com.mckernant1.commons.metrics.Metrics
 import java.time.Duration
 
 /**
