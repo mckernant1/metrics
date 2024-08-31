@@ -38,6 +38,13 @@ abstract class Metrics(
     }
 
     /**
+     * Adds a percentage type metric
+     */
+    fun addPercentage(name: String, value: Double) {
+        addMetric(Metric(name, value, MetricUnit.PERCENT))
+    }
+
+    /**
      * Adds a time type metric in millis
      */
     fun addTime(name: String, duration: Duration) {

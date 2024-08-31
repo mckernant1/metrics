@@ -23,9 +23,9 @@ object CacheMetrics {
         this.addCount("loadExceptionCount", cacheStats.loadExceptionCount())
         this.addCount("loadSuccessCount", cacheStats.loadSuccessCount())
 
-        this.addCount("missRate", cacheStats.missRate())
-        this.addCount("loadExceptionRate", cacheStats.loadExceptionRate())
-        this.addCount("hitRate", cacheStats.hitRate())
+        this.addPercentage("missRate", cacheStats.missRate() * 100)
+        this.addPercentage("loadExceptionRate", cacheStats.loadExceptionRate() * 100)
+        this.addPercentage("hitRate", cacheStats.hitRate() * 100)
 
         this.addTime("averageLoadPenalty", Duration.ofNanos(cacheStats.averageLoadPenalty().toLong()))
 

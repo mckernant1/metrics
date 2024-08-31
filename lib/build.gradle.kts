@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.mckernant1.commons"
-version = "0.0.5"
+version = "0.0.6"
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -29,17 +29,17 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
     implementation(libs.guava)
 
     implementation("com.mckernant1.commons:kotlin-utils:0.2.3")
-    implementation("org.slf4j:slf4j-api:2.0.6")
+    implementation("org.slf4j:slf4j-api:2.0.12")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
 
-    implementation(platform("software.amazon.awssdk:bom:2.20.69"))
+    implementation(platform("software.amazon.awssdk:bom:2.27.15"))
     implementation("software.amazon.awssdk:cloudwatch")
 }
 

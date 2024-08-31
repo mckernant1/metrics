@@ -26,6 +26,7 @@ class CloudWatchMetrics(
                 .metricName(metric.name)
                 .timestamp(metric.timestamp)
                 .value(metric.value.toDouble())
+                .unit(metric.unit.toStandardUnit())
                 .dimensions(dimensions.map(Dimension::toDimension))
                 .build()
         }
