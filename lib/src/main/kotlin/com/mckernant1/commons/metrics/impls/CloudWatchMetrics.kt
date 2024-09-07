@@ -23,7 +23,7 @@ class CloudWatchMetrics(
 ) : Metrics(dimensions) {
 
     companion object {
-        fun MetricUnit.toStandardUnit(): StandardUnit = when (this) {
+        private fun MetricUnit.toStandardUnit(): StandardUnit = when (this) {
             COUNT -> StandardUnit.COUNT
             PERCENT -> StandardUnit.PERCENT
             SECONDS -> StandardUnit.SECONDS
@@ -32,7 +32,7 @@ class CloudWatchMetrics(
             NONE -> StandardUnit.NONE
         }
 
-        fun Dimension.toAwsDimension(): AwsDimension = AwsDimension.builder()
+        private fun Dimension.toAwsDimension(): AwsDimension = AwsDimension.builder()
             .name(name)
             .value(value)
             .build()

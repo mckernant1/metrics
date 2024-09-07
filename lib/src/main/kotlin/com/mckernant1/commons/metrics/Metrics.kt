@@ -116,8 +116,8 @@ abstract class Metrics(
         val newDimensions = dimensions
             .map { (name, value) -> Dimension(name, value) }
 
-        if (newDimensions.intersect(this.dimensions).isNotEmpty()) {
-            throw IllegalStateException("Attempting to add Dimensions that already exist. currentDimensions: ${this.dimensions}, newDimensions: $newDimensions")
+        if (newDimensions.any { this.dimensions.contains(it) }) {
+            throw IllegalStateException("Attempting to add dimensions that already exist. currentDimensions: ${this.dimensions}, newDimensions: $newDimensions")
         }
 
         // Create a copy of current dimensions and add new dimensions

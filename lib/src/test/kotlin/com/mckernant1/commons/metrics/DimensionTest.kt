@@ -11,8 +11,6 @@ class DimensionTest {
         val b = Dimension("D", "b")
 
         assertEquals(a, b)
-
-
         assertNotEquals<Dimension?>(a, null)
     }
 

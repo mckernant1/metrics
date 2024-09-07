@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.mckernant1.commons"
-version = "0.0.8"
+version = "0.0.9"
 
 repositories {
     // Use Maven Central for resolving dependencies.

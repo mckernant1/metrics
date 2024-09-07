@@ -60,14 +60,14 @@ class MetricsTest {
             setOf(Dimension("Host", "localhost"))
         )
 
+        metrics.newMetrics("Hostname" to "google.com")
+
         assertThrows<IllegalStateException> {
             metrics.newMetrics("Host" to "127.0.0.1")
         }
 
         assertThrows<IllegalStateException> {
-            metrics.withNewMetrics("Host" to "127.0.1.1") {
-
-            }
+            metrics.withNewMetrics("Host" to "127.0.1.1") {}
         }
     }
 
