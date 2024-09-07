@@ -65,17 +65,17 @@ class MetricsTest {
         }
 
         assertThrows<IllegalStateException> {
-            metrics.withDimensions("Host" to "127.0.1.1") {
+            metrics.withNewMetrics("Host" to "127.0.1.1") {
 
             }
         }
     }
 
     @Test
-    fun testWithDimensions() {
+    fun testWithNewMetrics() {
         val metrics = TestMetricsImpl()
 
-        metrics.withDimensions("Host" to "localhost") {
+        metrics.withNewMetrics("Host" to "localhost") {
             val subMetrics = it as TestMetricsImpl
             assertTrue(subMetrics.exposeDimensions().isNotEmpty())
         }

@@ -79,7 +79,7 @@ abstract class Metrics(
     /**
      * Run a block with a new metrics object and then submit
      */
-    fun <T> withDimensions(
+    fun <T> withNewMetrics(
         vararg dimensions: Pair<String, String>,
         block: (Metrics) -> T
     ): T {
@@ -90,7 +90,9 @@ abstract class Metrics(
     }
 
     /**
-     * Runs a block with the current metrics and then submit
+     * Runs a block with the current metrics and then submit.
+     *
+     * Not recommended for using with multithreaded
      */
     fun <T> submitAndClear(block: (Metrics) -> T): T {
         if (metrics.isNotEmpty()) {
