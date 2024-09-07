@@ -1,21 +1,22 @@
 package com.mckernant1.commons.metrics
 
-import software.amazon.awssdk.services.cloudwatch.model.StandardUnit
+import java.util.concurrent.TimeUnit
 
 enum class MetricUnit {
     COUNT,
     PERCENT,
     SECONDS,
     MILLISECONDS,
-    BYTES
+    BYTES,
+    NONE
     ;
 
-    fun toStandardUnit(): StandardUnit = when (this) {
-        COUNT -> StandardUnit.COUNT
-        PERCENT -> StandardUnit.PERCENT
-        SECONDS -> StandardUnit.SECONDS
-        MILLISECONDS -> StandardUnit.MILLISECONDS
-        BYTES -> StandardUnit.BYTES
+    companion object {
+        fun TimeUnit.toMetricUnit(): MetricUnit = when (this) {
+            TimeUnit.MILLISECONDS -> MILLISECONDS
+            TimeUnit.SECONDS -> SECONDS
+            else -> throw UnsupportedOperationException("Unsupported metric unit $this")
+        }
     }
 
 }

@@ -13,12 +13,11 @@ import kotlinx.coroutines.runBlocking
  */
 class SendingChannelMetrics(
     private val sender: SendChannel<Collection<Metric>>,
-    namespace: String,
     dimensions: Set<Dimension>
-) : Metrics(namespace, dimensions) {
+) : Metrics(dimensions) {
 
     override fun newMetricsInternal(dimensions: Set<Dimension>): Metrics {
-        return SendingChannelMetrics(sender, namespace, dimensions)
+        return SendingChannelMetrics(sender, dimensions)
     }
 
     /**

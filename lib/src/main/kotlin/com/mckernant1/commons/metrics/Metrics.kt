@@ -1,34 +1,39 @@
 package com.mckernant1.commons.metrics
 
+import com.mckernant1.commons.logging.Slf4j.logger
+import com.mckernant1.commons.metrics.MetricUnit.Companion.toMetricUnit
 import com.mckernant1.commons.standalone.measureOperation
+import org.slf4j.Logger
 import java.time.Duration
+import java.util.LinkedList
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.reflect.KClass
 
 /**
- * # Metrics object.
+ * # Metrics object
  *
- * You should have one of these per project and use getMetrics to create child metrics
- * with different dimensions.
+ * You should have one of these per project and use [Metrics.newMetrics] or
+ * similar to create child metrics with different dimensions for different components.
  *
- * There should be one overarching metrics object per project and then other newMetrics are branched off for components
+ * This metrics object is safe to share between threads. Though it is not recommended to submit metrics from multiple threads.
  *
- * This metrics object is safe to share between threads. Though it is not recommended to submit metrics from multiple threads
+ * This class has a locking mechanism.
+ * 1. Only one metrics may be added at a time
+ * 2. Submitting metrics blocks the adding of new metrics
  *
- * Metrics list will be added to and will submit and clear simultaneously in a locking fashion.
- *
- * @param namespace The namespace of the metric. Usually service differentiator
- * @param dimensions are instantiated at creation. dimensions are attached to metrics as a String String map
+ * @param dimensions are instantiated at creation.
  *
  */
 abstract class Metrics(
-    protected val namespace: String,
     protected val dimensions: Set<Dimension>
 ) {
 
     private val metricsLock: ReentrantLock = ReentrantLock()
-    protected val metrics: MutableList<Metric> = mutableListOf()
+    private val logger: Logger = logger()
+
+    protected val metrics: MutableList<Metric> = LinkedList()
 
     /**
      * Adds a count type metric
@@ -45,14 +50,16 @@ abstract class Metrics(
     }
 
     /**
-     * Adds a time type metric in millis
+     * Adds a time type metric.
+     *
+     * @param unit Accepts Millis, Micros, Seconds
      */
-    fun addTime(name: String, duration: Duration) {
-        addMetric(Metric(name, duration.toMillis(), MetricUnit.MILLISECONDS))
+    fun addTime(name: String, duration: Duration, unit: TimeUnit = TimeUnit.MILLISECONDS) {
+        addMetric(Metric(name, unit.convert(duration), unit.toMetricUnit()))
     }
 
     /**
-     * Adds a metric to the metrics list. This
+     * Adds a metric to the metrics list.
      */
     fun addMetric(metric: Metric) {
         metricsLock.withLock {
@@ -70,7 +77,7 @@ abstract class Metrics(
     }
 
     /**
-     * Run a block within the scope of a new dimensions and then submit
+     * Run a block with a new metrics object and then submit
      */
     fun <T> withDimensions(
         vararg dimensions: Pair<String, String>,
@@ -80,6 +87,18 @@ abstract class Metrics(
         val result = block(localMetrics)
         localMetrics.submitInternal()
         return result
+    }
+
+    /**
+     * Runs a block with the current metrics and then submit
+     */
+    fun <T> submitAndClear(block: (Metrics) -> T): T {
+        if (metrics.isNotEmpty()) {
+            logger.warn("Metrics are not empty when entering submitAndClear block. Metrics added before the block will still be submitted")
+        }
+        val t = block(this)
+        submitAndClear()
+        return t
     }
 
     /**
@@ -121,10 +140,18 @@ abstract class Metrics(
      *
      * Metrics have already been locked when this method is called so no new metrics may be submitted.
      *
-     * WARNING: This will cause metric adds on the hot path to block until submit internal is finished
+     * WARNING: This will cause metric adds on any metrics object that is shared between threads to block until submit internal is finished
      */
     protected abstract fun submitInternal()
 
+    /**
+     * Clears the current metrics
+     */
+    fun clear() {
+        metricsLock.withLock {
+            metrics.clear()
+        }
+    }
 
     /**
      * Submits the metrics and clears the metrics list.

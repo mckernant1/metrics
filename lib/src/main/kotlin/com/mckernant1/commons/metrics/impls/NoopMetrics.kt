@@ -9,15 +9,14 @@ import com.mckernant1.commons.metrics.Metrics
  *
  */
 class NoopMetrics(
-    namespace: String,
     dimensions: Set<Dimension> = setOf(),
     private val mapper: ObjectMapper = ObjectMapper()
-) : Metrics(namespace, dimensions) {
+) : Metrics(dimensions) {
 
     private val logger = logger()
 
     override fun newMetricsInternal(dimensions: Set<Dimension>): Metrics {
-        return NoopMetrics(namespace, dimensions, mapper)
+        return NoopMetrics(dimensions, mapper)
     }
 
     override fun submitInternal() {

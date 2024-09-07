@@ -1,9 +1,8 @@
 package com.mckernant1.commons.metrics
 
 class TestMetricsImpl(
-    namespace: String,
     dimensions: Set<Dimension> = setOf()
-) : Metrics(namespace, dimensions) {
+) : Metrics(dimensions) {
 
     fun exposeMetrics(): List<Metric> {
         return metrics
@@ -14,7 +13,7 @@ class TestMetricsImpl(
     }
 
     override fun newMetricsInternal(dimensions: Set<Dimension>): Metrics {
-        return TestMetricsImpl(namespace, dimensions)
+        return TestMetricsImpl(dimensions)
     }
 
     override fun submitInternal() {

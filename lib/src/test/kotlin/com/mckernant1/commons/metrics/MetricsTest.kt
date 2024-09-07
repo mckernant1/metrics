@@ -16,7 +16,7 @@ class MetricsTest {
     @Test
     fun testTime(): Unit = runBlocking {
         val (time, metrics) = measureOperation {
-            TestMetricsImpl("Test")
+            TestMetricsImpl()
         }
         metrics.addTime("TimeToCreateMetrics", time)
 
@@ -38,7 +38,7 @@ class MetricsTest {
 
     @Test
     fun testCount() = runBlocking {
-        val metrics = TestMetricsImpl("Test")
+        val metrics = TestMetricsImpl()
         val hello = "Hello"
         val hello1 = "Hello1"
         metrics.addCount(hello, 5)
@@ -57,7 +57,6 @@ class MetricsTest {
     @Test
     fun throwOnDuplicateDimensions() {
         val metrics = TestMetricsImpl(
-            "Test",
             setOf(Dimension("Host", "localhost"))
         )
 
@@ -73,13 +72,37 @@ class MetricsTest {
     }
 
     @Test
-    fun testWithMetrics() {
-        val metrics = TestMetricsImpl("Test")
+    fun testWithDimensions() {
+        val metrics = TestMetricsImpl()
 
         metrics.withDimensions("Host" to "localhost") {
             val subMetrics = it as TestMetricsImpl
             assertTrue(subMetrics.exposeDimensions().isNotEmpty())
         }
+    }
+
+    @Test
+    fun testSubmitAndClear() {
+        val metrics = TestMetricsImpl()
+
+        metrics.submitAndClear {
+            val subMetrics = it as TestMetricsImpl
+            subMetrics.addCount("test", 1)
+            assertTrue(subMetrics.exposeMetrics().isNotEmpty())
+            assertTrue(subMetrics.exposeDimensions().isEmpty())
+        }
+        assertTrue(metrics.exposeMetrics().isEmpty())
+    }
+
+    @Test
+    fun testClear() {
+        val metrics = TestMetricsImpl()
+
+        metrics.addCount("test", 1)
+        assertTrue(metrics.exposeMetrics().isNotEmpty())
+
+        metrics.clear()
+        assertTrue(metrics.exposeMetrics().isEmpty())
     }
 
 }
