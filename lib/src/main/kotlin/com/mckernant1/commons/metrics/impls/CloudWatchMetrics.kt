@@ -45,7 +45,7 @@ class CloudWatchMetrics(
     }
 
     override fun submitInternal() {
-        logger.debug("Submitting metrics")
+        logger.debug("Submitting ${metrics.size} metrics")
         val datum = metrics.map { metric ->
             MetricDatum.builder()
                 .metricName(metric.name)
@@ -67,6 +67,4 @@ class CloudWatchMetrics(
             }
         }
     }
-
-
 }

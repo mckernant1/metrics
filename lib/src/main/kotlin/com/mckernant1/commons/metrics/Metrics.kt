@@ -52,7 +52,7 @@ abstract class Metrics(
     /**
      * Adds a time type metric.
      *
-     * @param unit Accepts Millis, Micros, Seconds
+     * @param unit Accepts Millis and Seconds
      */
     fun addTime(name: String, duration: Duration, unit: TimeUnit = TimeUnit.MILLISECONDS) {
         addMetric(Metric(name, unit.convert(duration), unit.toMetricUnit()))
@@ -112,6 +112,11 @@ abstract class Metrics(
      */
     protected abstract fun newMetricsInternal(dimensions: Set<Dimension>): Metrics
 
+    /**
+     * Creates a new metrics object with new dimensions combined with existing dimensions
+     *
+     * @throws IllegalStateException if there is overlap between the existing dimensions and newly added dimensions
+     */
     fun newMetrics(vararg dimensions: Pair<String, String>): Metrics {
         val newDimensions = dimensions
             .map { (name, value) -> Dimension(name, value) }
@@ -121,7 +126,7 @@ abstract class Metrics(
         }
 
         // Create a copy of current dimensions and add new dimensions
-        val childDimensions = this.dimensions.toMutableSet()
+        val childDimensions = HashSet(this.dimensions)
         childDimensions.addAll(newDimensions)
 
         return newMetricsInternal(childDimensions)
