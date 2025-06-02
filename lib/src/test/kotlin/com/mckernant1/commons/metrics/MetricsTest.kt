@@ -3,10 +3,14 @@ package com.mckernant1.commons.metrics
 import com.mckernant1.commons.standalone.delay
 import com.mckernant1.commons.standalone.measureDuration
 import com.mckernant1.commons.standalone.measureOperation
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Duration
+import java.util.LinkedList
+import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -103,6 +107,30 @@ class MetricsTest {
 
         metrics.clear()
         assertTrue(metrics.exposeMetrics().isEmpty())
+    }
+
+    @Test
+    fun testConcurrency(): Unit = runBlocking {
+        val metrics = TestMetricsImpl()
+        val jobs = LinkedList<Job>()
+
+        repeat(100) {
+            val a = launch {
+                delay(Duration.ofMillis(100 + Random.nextLong(0, 200)))
+                metrics.addCount("test", it)
+            }
+            jobs.add(a)
+        }
+
+        jobs.forEach { it.join() }
+
+        assertEquals(100, metrics.exposeMetrics().size)
+
+        assertEquals(
+            (0 until 100).toList(),
+            metrics.exposeMetrics().map { it.value.toInt() }.sorted()
+        )
+
     }
 
 }

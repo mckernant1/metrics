@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
  * This metrics object is safe to share between threads. Though it is not recommended to submit metrics from multiple threads.
  *
  * This class has a locking mechanism.
- * 1. Only one metrics may be added at a time
+ * 1. Only one metric may be added at a time
  * 2. Submitting metrics blocks the adding of new metrics
  *
  * @param dimensions are instantiated at creation.
