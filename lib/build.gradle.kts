@@ -16,11 +16,19 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-
+    id("pl.allegro.tech.build.axion-release") version "1.18.9"
 }
 
+scmVersion {
+    versionIncrementer("incrementPatch")
+    tag {
+        prefix = ""
+    }
+}
+
+
 group = "com.mckernant1.commons"
-version = "0.0.10"
+version = scmVersion.version
 
 repositories {
     // Use Maven Central for resolving dependencies.
