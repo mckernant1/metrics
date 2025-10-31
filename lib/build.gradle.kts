@@ -45,7 +45,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.12")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.1")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0")
 
     implementation(platform("software.amazon.awssdk:bom:2.27.15"))
