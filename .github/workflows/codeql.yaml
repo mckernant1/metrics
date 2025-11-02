@@ -30,8 +30,20 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Initialize CodeQL
+      - name: Initialize CodeQL (Non-Actions)
         uses: github/codeql-action/init@v4
+        if: matrix.language != 'actions'
+        with:
+          languages: ${{ matrix.language }}
+          dependency-caching: true
+          packs: >
+            codeql/${{ matrix.language }}-queries,
+            githubsecuritylab/codeql-${{ matrix.language }}-queries
+          queries: security-and-quality
+
+      - name: Initialize CodeQL (Actions)
+        uses: github/codeql-action/init@v4
+        if: matrix.language == 'actions'
         with:
           languages: ${{ matrix.language }}
           dependency-caching: true
