@@ -48,7 +48,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.1")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1")
 
-    implementation(platform("software.amazon.awssdk:bom:2.37.3"))
+    implementation(platform("software.amazon.awssdk:bom:2.40.13"))
     implementation("software.amazon.awssdk:cloudwatch")
 }
 
