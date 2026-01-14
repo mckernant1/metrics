@@ -16,7 +16,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("pl.allegro.tech.build.axion-release") version "1.21.0"
+    id("pl.allegro.tech.build.axion-release") version "1.21.1"
 }
 
 scmVersion {
