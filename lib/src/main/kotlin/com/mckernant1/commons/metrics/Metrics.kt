@@ -9,8 +9,6 @@ import org.slf4j.Logger
 import java.time.Duration
 import java.util.LinkedList
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 import kotlin.reflect.KClass
 
 /**
@@ -66,6 +64,15 @@ abstract class Metrics(
     suspend fun addMetric(metric: Metric) {
         metricsLock.withLock {
             metrics.add(metric)
+        }
+    }
+
+    /**
+     * Add all metrics
+     */
+    suspend fun addMetrics(metrics: Iterable<Metric>) {
+        metricsLock.withLock {
+            this.metrics.addAll(metrics)
         }
     }
 
