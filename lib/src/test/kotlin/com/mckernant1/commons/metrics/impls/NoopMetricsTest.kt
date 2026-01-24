@@ -1,6 +1,6 @@
 package com.mckernant1.commons.metrics.impls
 
-import com.mckernant1.commons.standalone.measureOperation
+import com.mckernant1.commons.standalone.MeasureSuspend.measureOperation
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 

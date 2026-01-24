@@ -1,8 +1,8 @@
 package com.mckernant1.commons.metrics
 
+import com.mckernant1.commons.standalone.MeasureSuspend.measureDuration
+import com.mckernant1.commons.standalone.MeasureSuspend.measureOperation
 import com.mckernant1.commons.standalone.delay
-import com.mckernant1.commons.standalone.measureDuration
-import com.mckernant1.commons.standalone.measureOperation
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

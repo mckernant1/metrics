@@ -2,7 +2,7 @@ package com.mckernant1.commons.metrics
 
 import com.mckernant1.commons.logging.Slf4j.logger
 import com.mckernant1.commons.metrics.MetricUnit.Companion.toMetricUnit
-import com.mckernant1.commons.standalone.measureOperation
+import com.mckernant1.commons.standalone.MeasureSuspend.measureOperation
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.slf4j.Logger
@@ -79,7 +79,7 @@ abstract class Metrics(
     /**
      * Record the time of an operation and return a value
      */
-    suspend fun <T> timeOperation(name: String, block: () -> T): T {
+    suspend fun <T> timeOperation(name: String, block: suspend () -> T): T {
         val (time, result) = measureOperation(block)
         addTime(name, time)
         return result
@@ -90,7 +90,7 @@ abstract class Metrics(
      */
     suspend fun <T> withNewMetrics(
         vararg dimensions: Pair<String, String>,
-        block: (Metrics) -> T
+        block: suspend (Metrics) -> T
     ): T {
         val localMetrics = newMetrics(*dimensions)
         val result = block(localMetrics)

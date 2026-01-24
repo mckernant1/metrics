@@ -41,7 +41,7 @@ dependencies {
 
     implementation(libs.guava)
 
-    implementation("com.mckernant1.commons:kotlin-utils:0.2.3")
+    implementation("com.mckernant1:kotlin-utils:0.3.17")
     implementation("org.slf4j:slf4j-api:2.0.17")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:2.20.1")
