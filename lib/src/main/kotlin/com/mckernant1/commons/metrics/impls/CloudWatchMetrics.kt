@@ -10,15 +10,17 @@ import com.mckernant1.commons.metrics.MetricUnit.NONE
 import com.mckernant1.commons.metrics.MetricUnit.PERCENT
 import com.mckernant1.commons.metrics.MetricUnit.SECONDS
 import com.mckernant1.commons.metrics.Metrics
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.future.asDeferred
 import org.slf4j.Logger
-import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
+import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit
 import software.amazon.awssdk.services.cloudwatch.model.Dimension as AwsDimension
 
 class CloudWatchMetrics(
     private val namespace: String,
-    private val cloudWatchClient: CloudWatchClient,
+    private val cloudWatchClient: CloudWatchAsyncClient,
     dimensions: Set<Dimension> = setOf()
 ) : Metrics(dimensions) {
 
@@ -44,7 +46,7 @@ class CloudWatchMetrics(
         return CloudWatchMetrics(namespace, cloudWatchClient, dimensions)
     }
 
-    override fun submitInternal() {
+    override suspend fun submitInternal() {
         logger.debug("Submitting ${metrics.size} metrics")
         val datum = metrics.map { metric ->
             MetricDatum.builder()
@@ -60,11 +62,11 @@ class CloudWatchMetrics(
             logger.warn("We are sending over 1000 metrics from a single metrics object!")
         }
 
-        for (metricDatas in datum.chunked(1000)) {
+        datum.chunked(1000).map { metricDatas ->
             cloudWatchClient.putMetricData {
                 it.namespace(namespace)
                 it.metricData(metricDatas)
-            }
-        }
+            }.asDeferred()
+        }.awaitAll()
     }
 }

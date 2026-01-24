@@ -23,7 +23,7 @@ class SendingChannelMetrics(
     /**
      * Sends a copy of the metrics list over the channel
      */
-    override fun submitInternal() = runBlocking {
+    override suspend fun submitInternal() {
         sender.send(metrics.toList())
     }
 }

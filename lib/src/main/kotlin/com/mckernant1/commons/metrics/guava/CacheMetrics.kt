@@ -14,7 +14,7 @@ object CacheMetrics {
      *
      * Note: This method does not add a dimension for the cache name
      */
-    fun Metrics.addCacheStats(cacheStats: CacheStats) {
+    suspend fun Metrics.addCacheStats(cacheStats: CacheStats) {
         this.addCount("hitCount", cacheStats.hitCount())
         this.addCount("evictionCount", cacheStats.evictionCount())
         this.addCount("loadCount", cacheStats.loadCount())

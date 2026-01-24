@@ -24,7 +24,7 @@ class NoopMetrics(
         return NoopMetrics(dimensions, mapper)
     }
 
-    override fun submitInternal() {
+    override suspend fun submitInternal() {
         logger.debug("Submitting metrics with dimensions {}", dimensions)
         for (metric in metrics) {
             logger.debug("Publishing metric {}", mapper.writeValueAsString(metric))
