@@ -50,6 +50,8 @@ dependencies {
 
     implementation(platform("software.amazon.awssdk:bom:2.37.2"))
     implementation("software.amazon.awssdk:cloudwatch")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }
 
 testing {
@@ -76,7 +78,7 @@ tasks.withType(Test::class) {
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 

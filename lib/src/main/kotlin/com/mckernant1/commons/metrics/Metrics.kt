@@ -3,6 +3,8 @@ package com.mckernant1.commons.metrics
 import com.mckernant1.commons.logging.Slf4j.logger
 import com.mckernant1.commons.metrics.MetricUnit.Companion.toMetricUnit
 import com.mckernant1.commons.standalone.measureOperation
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.slf4j.Logger
 import java.time.Duration
 import java.util.LinkedList
@@ -30,7 +32,7 @@ abstract class Metrics(
     protected val dimensions: Set<Dimension>
 ) {
 
-    private val metricsLock: ReentrantLock = ReentrantLock()
+    private val metricsLock: Mutex = Mutex()
     private val logger: Logger = logger()
 
     protected val metrics: MutableList<Metric> = LinkedList()
@@ -38,14 +40,14 @@ abstract class Metrics(
     /**
      * Adds a count type metric
      */
-    fun addCount(name: String, value: Number) {
+    suspend fun addCount(name: String, value: Number) {
         addMetric(Metric(name, value, MetricUnit.COUNT))
     }
 
     /**
      * Adds a percentage type metric
      */
-    fun addPercentage(name: String, value: Double) {
+    suspend fun addPercentage(name: String, value: Double) {
         addMetric(Metric(name, value, MetricUnit.PERCENT))
     }
 
@@ -54,14 +56,14 @@ abstract class Metrics(
      *
      * @param unit Accepts Millis and Seconds
      */
-    fun addTime(name: String, duration: Duration, unit: TimeUnit = TimeUnit.MILLISECONDS) {
+    suspend fun addTime(name: String, duration: Duration, unit: TimeUnit = TimeUnit.MILLISECONDS) {
         addMetric(Metric(name, unit.convert(duration), unit.toMetricUnit()))
     }
 
     /**
      * Adds a metric to the metrics list.
      */
-    fun addMetric(metric: Metric) {
+    suspend fun addMetric(metric: Metric) {
         metricsLock.withLock {
             metrics.add(metric)
         }
@@ -70,7 +72,7 @@ abstract class Metrics(
     /**
      * Record the time of an operation and return a value
      */
-    fun <T> timeOperation(name: String, block: () -> T): T {
+    suspend fun <T> timeOperation(name: String, block: () -> T): T {
         val (time, result) = measureOperation(block)
         addTime(name, time)
         return result
@@ -79,7 +81,7 @@ abstract class Metrics(
     /**
      * Run a block with a new metrics object and then submit
      */
-    fun <T> withNewMetrics(
+    suspend fun <T> withNewMetrics(
         vararg dimensions: Pair<String, String>,
         block: (Metrics) -> T
     ): T {
@@ -94,7 +96,7 @@ abstract class Metrics(
      *
      * Not recommended for using with multithreaded
      */
-    fun <T> submitAndClear(block: (Metrics) -> T): T {
+    suspend fun <T> submitAndClear(block: suspend (Metrics) -> T): T {
         if (metrics.isNotEmpty()) {
             logger.warn("Metrics are not empty when entering submitAndClear block. Metrics added before the block will still be submitted")
         }
@@ -149,12 +151,12 @@ abstract class Metrics(
      *
      * WARNING: This will cause metric adds on any metrics object that is shared between threads to block until submit internal is finished
      */
-    protected abstract fun submitInternal()
+    protected abstract suspend fun submitInternal()
 
     /**
      * Clears the current metrics
      */
-    fun clear() {
+    suspend fun clear() {
         metricsLock.withLock {
             metrics.clear()
         }
@@ -165,7 +167,7 @@ abstract class Metrics(
      *
      * Will block new metrics from being added until completed
      */
-    fun submitAndClear() {
+    suspend fun submitAndClear() {
         metricsLock.withLock {
             submitInternal()
             metrics.clear()

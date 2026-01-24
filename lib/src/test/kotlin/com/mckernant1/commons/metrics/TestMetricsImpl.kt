@@ -16,7 +16,7 @@ class TestMetricsImpl(
         return TestMetricsImpl(dimensions)
     }
 
-    override fun submitInternal() {
+    override suspend fun submitInternal() {
 
     }
 

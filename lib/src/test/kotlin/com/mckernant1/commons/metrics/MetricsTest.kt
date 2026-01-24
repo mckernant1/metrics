@@ -59,7 +59,7 @@ class MetricsTest {
     }
 
     @Test
-    fun throwOnDuplicateDimensions() {
+    fun throwOnDuplicateDimensions(): Unit = runBlocking {
         val metrics = TestMetricsImpl(
             setOf(Dimension("Host", "localhost"))
         )
@@ -76,7 +76,7 @@ class MetricsTest {
     }
 
     @Test
-    fun testWithNewMetrics() {
+    fun testWithNewMetrics(): Unit = runBlocking {
         val metrics = TestMetricsImpl()
 
         metrics.withNewMetrics("Host" to "localhost") {
@@ -86,7 +86,7 @@ class MetricsTest {
     }
 
     @Test
-    fun testSubmitAndClear() {
+    fun testSubmitAndClear(): Unit = runBlocking {
         val metrics = TestMetricsImpl()
 
         metrics.submitAndClear {
@@ -99,7 +99,7 @@ class MetricsTest {
     }
 
     @Test
-    fun testClear() {
+    fun testClear(): Unit = runBlocking {
         val metrics = TestMetricsImpl()
 
         metrics.addCount("test", 1)
