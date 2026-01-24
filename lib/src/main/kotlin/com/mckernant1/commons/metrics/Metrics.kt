@@ -93,9 +93,11 @@ abstract class Metrics(
         block: suspend (Metrics) -> T
     ): T {
         val localMetrics = newMetrics(*dimensions)
-        val result = block(localMetrics)
-        localMetrics.submitInternal()
-        return result
+        try {
+            return block(localMetrics)
+        } finally {
+            localMetrics.submitInternal()
+        }
     }
 
     /**
@@ -107,9 +109,11 @@ abstract class Metrics(
         if (metrics.isNotEmpty()) {
             logger.warn("Metrics are not empty when entering submitAndClear block. Metrics added before the block will still be submitted")
         }
-        val t = block(this)
-        submitAndClear()
-        return t
+        try {
+            return block(this)
+        } finally {
+            submitAndClear()
+        }
     }
 
     /**
