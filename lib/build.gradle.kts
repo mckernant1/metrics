@@ -44,7 +44,7 @@ dependencies {
     implementation("com.mckernant1:kotlin-utils:0.3.17")
     implementation("org.slf4j:slf4j-api:2.0.17")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.21.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.0")
 
